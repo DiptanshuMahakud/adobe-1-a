@@ -1,55 +1,42 @@
-
 import os
 import json
 from extractor import extract_text_structure_from_pdf
+from classify_heading import classify_text
+from build_document import build_document_structure
 
-# Base directory (adobe/)
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-
-# Input/output paths
 INPUT_DIR = os.path.join(BASE_DIR, "input")
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 
 # Ensure output directory exists
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Process each PDF file in the input directory
+# Final combined result
+combined_output = {}
+
+# Process each PDF
 for filename in os.listdir(INPUT_DIR):
     if filename.lower().endswith(".pdf"):
         input_path = os.path.join(INPUT_DIR, filename)
         extracted_content = extract_text_structure_from_pdf(input_path)
+        classified_contents = classify_text(extracted_content)
+        structured_output = build_document_structure(classified_contents)
 
         name_without_ext = os.path.splitext(filename)[0]
-        output_filename = f"extracted_output_{name_without_ext}.json"
+        output_filename = f"{name_without_ext}.json"  # 🔁 changed here
         output_path = os.path.join(OUTPUT_DIR, output_filename)
 
+        # Write individual file output
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(extracted_content, f, indent=2, ensure_ascii=False)
+            json.dump(structured_output, f, indent=2, ensure_ascii=False)
 
-        print(f"✅ Extracted: {filename} → {output_filename}")
+        # Add to combined output
+        combined_output[filename] = extracted_content
 
+# Write combined output
+combined_output_path = os.path.join(OUTPUT_DIR, "output.json")
+with open(combined_output_path, "w", encoding="utf-8") as f:
+    json.dump(combined_output, f, indent=2, ensure_ascii=False)
 
-
-# import os
-# import json
-# from extractor import extract_from_directory
-
-# # Get the base directory (adobe/)
-# BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-
-# # Define input and output paths
-# INPUT_DIR = os.path.join(BASE_DIR, "input")
-# OUTPUT_DIR = os.path.join(BASE_DIR, "output")
-# OUTPUT_FILE = os.path.join(OUTPUT_DIR, "extracted_output.json")
-
-# # Ensure output directory exists
-# os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-# # Extract text structure from all PDFs in the input directory
-# extracted_data = extract_from_directory(INPUT_DIR)
-
-# # Save results to a JSON file
-# with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-#     json.dump(extracted_data, f, indent=2, ensure_ascii=False)
-
-# print(f"\n✅ Extracted content saved to: {OUTPUT_FILE}")
+print("✅ All PDFs processed. Individual and combined outputs are saved.")
