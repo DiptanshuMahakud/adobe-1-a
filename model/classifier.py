@@ -2,8 +2,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Text
 
 model_dir = "./bin"  
 
-tokenizer = AutoTokenizer.from_pretrained(model_dir)
-model = AutoModelForSequenceClassification.from_pretrained(model_dir)
+tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(model_dir, local_files_only=True)
 
 classifier = TextClassificationPipeline(
     model=model,
