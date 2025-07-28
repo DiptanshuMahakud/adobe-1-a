@@ -3,8 +3,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Text
 
 model_dir = Path(__file__).resolve().parent / "bin"
 
-tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=False)
-model = AutoModelForSequenceClassification.from_pretrained(model_dir, local_files_only=False)
+tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(model_dir, local_files_only=True)
 
 classifier = TextClassificationPipeline(
     model=model,
