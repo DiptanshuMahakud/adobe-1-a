@@ -12,8 +12,8 @@ classifier = TextClassificationPipeline(
     device=-1
 )
 
-def classify(text: list[str]):
+def classify(inp:str):
+    text = [inp]
     predictions = classifier(text)
     result = [int(max(item, key=lambda x: x['score'])['label'].split('_')[1]) for item in predictions]
-    return result
-    
+    return result[0]
